@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>⚠️ Testing Playground ⚠️</title>
+<title>⚠️ Testing Playground</title>
 <style>
     body {
         text-align: center;
@@ -21,63 +21,45 @@
         height: auto;
     }
 
-    /* Tooltip / Banner styles */
-    .plate-tooltip-container {
+    /* Banner styles */
+    .notifications-container {
         position: fixed;
         bottom: 20px;
         right: 20px;
+        width: 320px;
         z-index: 1000;
+        font-family: Arial, sans-serif;
     }
 
-    .tooltip-trigger {
-        display: inline-block;
-        width: 50px;
-        height: 50px;
-        background-color: #facc15;
-        border-radius: 50%;
-        position: relative;
-        cursor: pointer;
-        box-shadow: 0 2px 6px rgba(0,0,0,0.2);
-        transition: transform 0.2s;
-    }
-
-    .tooltip-trigger:hover {
-        transform: scale(1.1);
-    }
-
-    .tooltip-trigger::after {
-        content: attr(data-tooltip);
-        position: absolute;
-        bottom: 60px;
-        right: 50%;
-        transform: translateX(50%);
+    .alert {
         background-color: #fff8c5;
-        color: #78350f;
-        padding: 5px 10px;
+        border-left: 5px solid #facc15;
+        padding: 10px 15px;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.15);
         border-radius: 5px;
-        font-size: 13px;
-        white-space: nowrap;
-        opacity: 0;
-        pointer-events: none;
-        transition: opacity 0.2s;
-        box-shadow: 0 2px 6px rgba(0,0,0,0.15);
-    }
-
-    .tooltip-trigger:hover::after {
-        opacity: 1;
-    }
-
-    .tooltip-trigger .warning-symbol {
-        width: 100%;
-        height: 100%;
-        clip-path: polygon(50% 0%, 100% 100%, 0% 100%);
-        background-color: #f59e0b;
         display: flex;
-        align-items: center;
-        justify-content: center;
-        font-weight: bold;
-        color: #fff;
-        font-size: 20px;
+        align-items: center; /* Centers icon vertically */
+        gap: 10px;
+    }
+
+    .alert svg {
+        width: 20px;
+        height: 20px;
+        flex-shrink: 0;
+        color: #f59e0b;
+    }
+
+    .alert-prompt-wrap {
+        text-align: left;
+        font-size: 14px;
+        color: #78350f;
+    }
+
+    .alert-prompt-wrap a {
+        display: inline-block;
+        margin-top: 5px;
+        color: #1d4ed8;
+        text-decoration: underline;
     }
 </style>
 </head>
@@ -86,11 +68,16 @@
 <p>Rawr</p>
 <img src="https://github.com/user-attachments/assets/a84ef3ad-5890-4d51-98a5-f3c5c329608d" alt="Dinosaur">
 
-<!-- Tooltip Banner by pharmacist-sabot -->
-<div class="plate-tooltip-container">
-    <a href="https://allanhu100.github.io/home" class="tooltip-trigger" data-tooltip="Warning: Page Functionality May Vary">
-        <div class="warning-symbol">!</div>
-    </a>
+<div class="notifications-container">
+    <div class="alert">
+        <svg aria-hidden="true" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
+            <path clip-rule="evenodd" d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z" fill-rule="evenodd"></path>
+        </svg>
+        <div class="alert-prompt-wrap">
+            <p>This is a testing page. Page functionality may vary.</p>
+            <a href="https://allanhu100.github.io/home">Go back to Home Page</a>
+        </div>
+    </div>
 </div>
 
 </body>
