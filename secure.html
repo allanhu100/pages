@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Enter PIN</title>
+</head>
+<body>
+
+<h2>Protected Page Access</h2>
+
+<form id="pinForm">
+  <input type="password" id="pin" placeholder="Enter PIN" required>
+  <button type="submit">Submit</button>
+</form>
+
+<div id="message"></div>
+
+<script>
+document.getElementById('pinForm').addEventListener('submit', async (e) => {
+  e.preventDefault();
+  const pin = document.getElementById('pin').value;
+
+  // Replace with your actual Vercel project URL
+  const res = await fetch('https://allanhu100-github-pm0dm3ue7-allanhu100s-projects.vercel.app/components/check-pin', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ pin })
+  });
+
+  const data = await res.json();
+
+  if (data.ok) {
+    // Redirect to the protected page if PIN is correct
+    window.location.href = '/protected-page.html';
+  } else {
+    document.getElementById('message').textContent = 'Wrong PIN, try again';
+  }
+});
+</script>
+
+</body>
+</html>
