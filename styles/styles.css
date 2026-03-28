@@ -3,3 +3,46 @@
   border-top: 1px solid #e0e0e0;
   margin: 20px 0;
 }
+
+.button {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: flex-end;
+  width: 8.5em;
+  height: 2.9em;
+  padding: 0 1.5em;
+  background-color: #ffffff00;
+  color: #fff;
+  border: #3654ff 0.2em solid;
+  border-radius: 11px;
+  text-decoration: none;
+  transition: all 0.6s ease;
+}
+
+.button:hover {
+  background-color: #3654ff;
+  cursor: pointer;
+}
+
+.button::before {
+  content: '';
+  display: block;
+  width: 1.6em;
+  height: 1.6em;
+  mask: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5"><path stroke-linecap="round" stroke-linejoin="round" d="M4.5 12h15m0 0l-6.75-6.75M19.5 12l-6.75 6.75"/></svg>') no-repeat center;
+  background-color: currentColor;
+  margin-right: 0.5em;
+  transition: all 0.6s ease;
+}
+
+.button:hover::before {
+  transform: translateX(5px);
+}
+.button:hover svg {
+  transform: translateX(5px);
+}
+
+.text {
+  margin: 0 1.5em
+}
