@@ -14,7 +14,7 @@ fetch('/components/warning.html')
 
     // return
     document.getElementById('returnToHome').onclick = () => {
-      window.location.href = 'https://allanhu100.github.io/r?id=home"';
+      window.location.href = 'https://allanhu100.github.io/r?id=home';
     };
   })
   .catch(err => console.error('Warning component failed:', err));
