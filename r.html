@@ -3,8 +3,29 @@
 <head>
 <meta charset="UTF-8">
 <title>Redirecting...</title>
+
 <style>
-  body { font-family: sans-serif; text-align: center; padding: 2rem; background: #f9f9f9; color: #333; }
+  body {
+    font-family: sans-serif;
+    text-align: center;
+    padding: 2rem;
+    background: #f9f9f9;
+    color: #333;
+
+    /* Center everything nicely */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    flex-direction: column;
+  }
+
+  .message {
+    font-size: 2rem;
+    font-weight: bold;
+    text-align: center;
+  }
+
   #previewBox {
     display: inline-block;
     background: #e0e0e0;
@@ -13,9 +34,13 @@
     max-width: 90%;
     word-wrap: break-word;
     margin-top: 2rem;
-    font-size: 1.1rem;
+    font-size: 1.2rem;
   }
-  #buttons { margin-top: 1.5rem; }
+
+  #buttons {
+    margin-top: 1.5rem;
+  }
+
   button {
     padding: 0.6rem 1rem;
     margin: 0 0.5rem;
@@ -24,20 +49,34 @@
     border-radius: 5px;
     cursor: pointer;
   }
-  #redirectNow { background: #4caf50; color: white; }
-  #cancelRedirect { background: #f44336; color: white; }
+
+  #redirectNow {
+    background: #4caf50;
+    color: white;
+  }
+
+  #cancelRedirect {
+    background: #f44336;
+    color: white;
+  }
+
+  #timer {
+    margin-top: 1rem;
+    font-size: 1rem;
+  }
 </style>
+
 <script>
 (async () => {
   const params = new URLSearchParams(window.location.search);
   const idParam = params.get('id');
 
   if (!idParam) {
-    document.body.textContent = "No id provided for redirect ❌";
+    document.body.innerHTML = `<div class="message">No id provided for redirect ❌</div>`;
     return;
   }
 
-  const sheetCSVUrl = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vQqTIz74rTp4UAPrND29ZzRMoDgQS2HLB7FKU5m1IF0AhvvxPgn7ocyUXy9DMiGVb1_DKiePMGIVNTc/pub?gid=463148270&single=true&output=csv&t=${Date.now()}';
+  const sheetCSVUrl = `https://docs.google.com/spreadsheets/d/e/2PACX-1vQqTIz74rTp4UAPrND29ZzRMoDgQS2HLB7FKU5m1IF0AhvvxPgn7ocyUXy9DMiGVb1_DKiePMGIVNTc/pub?gid=463148270&single=true&output=csv&t=${Date.now()}`;
 
   try {
     const res = await fetch(sheetCSVUrl);
@@ -56,30 +95,37 @@
         expiry: row[3]?.trim(),
         displayPreview: (row[4]?.trim().toUpperCase() === "TRUE")
       };
-      if (redirect.id && redirect.url) redirects[redirect.id] = redirect;
+      if (redirect.id && redirect.url) {
+        redirects[redirect.id] = redirect;
+      }
     });
 
     const redirectObj = redirects[idParam];
 
     if (redirectObj && (!redirectObj.expiry || new Date() < new Date(redirectObj.expiry))) {
+
       if (redirectObj.displayPreview) {
-        // Create preview box
         const previewBox = document.createElement('div');
         previewBox.id = 'previewBox';
+
         previewBox.innerHTML = `
-          You are being redirected to:<br><a href="${redirectObj.url}" target="_blank">${redirectObj.url}</a>
+          You are being redirected to:<br>
+          <a href="${redirectObj.url}" target="_blank">${redirectObj.url}</a>
+
           <div id="buttons">
             <button id="redirectNow">Redirect Now</button>
             <button id="cancelRedirect">Cancel Redirect</button>
           </div>
+
           <p id="timer">Redirecting in 10 seconds...</p>
         `;
+
         document.body.innerHTML = "";
         document.body.appendChild(previewBox);
 
-        // Timer
         let countdown = 10;
         const timerEl = document.getElementById('timer');
+
         const interval = setInterval(() => {
           countdown--;
           if (countdown > 0) {
@@ -90,26 +136,32 @@
           }
         }, 1000);
 
-        // Button handlers
-        document.getElementById('redirectNow').onclick = () => window.location.href = redirectObj.url;
-        document.getElementById('cancelRedirect').onclick = () => window.location.href = 'https://allanhu100.github.io';
+        document.getElementById('redirectNow').onclick = () => {
+          window.location.href = redirectObj.url;
+        };
+
+        document.getElementById('cancelRedirect').onclick = () => {
+          window.location.href = 'https://allanhu100.github.io';
+        };
 
       } else {
-        // Immediate redirect
         window.location.href = redirectObj.url;
       }
+
     } else {
-      document.body.textContent = "Link expired or ID not found ❌";
+      document.body.innerHTML = `<div class="message">Link expired or ID not found ❌</div>`;
     }
 
   } catch (e) {
     console.error('Redirect failed:', e);
-    document.body.textContent = "Redirect failed ❌";
+    document.body.innerHTML = `<div class="message">Redirect failed ❌</div>`;
   }
 })();
 </script>
+
 </head>
+
 <body>
-Redirecting, please wait...
+  <div class="message">Redirecting, please wait...</div>
 </body>
 </html>
