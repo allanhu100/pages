@@ -69,16 +69,25 @@
   const params = new URLSearchParams(window.location.search);
   const idParam = params.get('id');
 
-  if (!idParam) {
+  if (idParam === null || idParam.trim() === "") {
     document.body.innerHTML = `<div class="message">No id provided for redirect ❌</div>`;
     return;
-  }
+}
 
   const sheetCSVUrl = `https://docs.google.com/spreadsheets/d/e/2PACX-1vQqTIz74rTp4UAPrND29ZzRMoDgQS2HLB7FKU5m1IF0AhvvxPgn7ocyUXy9DMiGVb1_DKiePMGIVNTc/pub?gid=463148270&single=true&output=csv&t=${Date.now()}`;
 
-  function isValidUrl(str) {
-    try { new URL(str); return true; } 
-    catch { return false; }
+  // Normalize bare domains to valid URL objects
+  function normalizeUrl(str) {
+    try {
+      const urlStr = str.startsWith('http://') || str.startsWith('https://') 
+        ? str 
+        : `https://${str}`;
+      const urlObj = new URL(urlStr);
+      if (!urlObj.hostname.includes('.')) return null; // reject invalid hostnames
+      return urlObj;
+    } catch {
+      return null;
+    }
   }
 
   try {
@@ -102,40 +111,49 @@
     });
 
     let redirectObj = redirects[idParam];
-    let urlToUse;
+    let urlObj = null;
 
-    // Determine redirect URL
+    // Determine URL
     if (redirectObj && (!redirectObj.expiry || new Date() < new Date(redirectObj.expiry))) {
-      urlToUse = redirectObj.url;
-    } else if (isValidUrl(idParam)) {
-      urlToUse = idParam.startsWith('http') ? idParam : `https://${idParam}`;
-      redirectObj = { displayPreview: true, isCSV: false }; // mark as arbitrary URL
+      urlObj = normalizeUrl(redirectObj.url);
+      redirectObj.isCSV = true; // mark as CSV
     } else {
-      document.body.innerHTML = `<div class="message">Link expired or ID not found ❌</div>`;
+      urlObj = normalizeUrl(idParam);
+      if (urlObj) redirectObj = { displayPreview: true, isCSV: false }; // arbitrary URL
+    }
+
+    if (!urlObj) {
+      document.body.innerHTML = `<div class="message">Link expired or invalid URL ❌</div>`;
       return;
     }
 
     if (redirectObj.displayPreview) {
-      const urlObj = new URL(urlToUse);
       const previewBox = document.createElement('div');
       previewBox.id = 'previewBox';
 
-      // Base content
+      let metadataHtml = '';
+      // Show metadata only for arbitrary URLs
+      if (redirectObj.isCSV === false) {
+        metadataHtml = `
+          <br><strong>Protocol:</strong> ${urlObj.protocol}<br>
+          <strong>Hostname:</strong> ${urlObj.hostname}<br>
+          <strong>Path:</strong> ${urlObj.pathname}<br>
+          <strong>Port:</strong> ${urlObj.port || 'default'}<br>
+        `;
+      }
+
       previewBox.innerHTML = `
         ⚠️ Go at your own risk!<br><br>
-        <strong>URL:</strong> <a href="${urlObj.href}" target="_blank">${urlObj.href}</a><br>
-        <strong>Protocol:</strong> ${urlObj.protocol}<br>
-        <strong>Hostname:</strong> ${urlObj.hostname}<br>
-        <strong>Path:</strong> ${urlObj.pathname}<br>
-        <strong>Port:</strong> ${urlObj.port || 'default'}<br>
+        <strong>URL:</strong> <a href="${urlObj.href}" target="_blank">${urlObj.href}</a>
+        ${metadataHtml}
         <div id="buttons">
           <button id="redirectNow">Redirect Now</button>
           <button id="cancelRedirect">Cancel Redirect</button>
         </div>
       `;
 
-      // Add timer only if CSV ID
-      if (redirectObj.isCSV !== false) {
+      // Add countdown only for CSV IDs
+      if (redirectObj.isCSV) {
         previewBox.innerHTML += `<p id="timer">Redirecting in 10 seconds...</p>`;
       }
 
@@ -150,8 +168,7 @@
         window.location.href = 'https://allanhu100.github.io';
       };
 
-      // Countdown for CSV IDs only
-      if (redirectObj.isCSV !== false) {
+      if (redirectObj.isCSV) {
         let countdown = 10;
         const timerEl = document.getElementById('timer');
         const interval = setInterval(() => {
@@ -166,7 +183,7 @@
       }
 
     } else {
-      window.location.href = urlToUse;
+      window.location.href = urlObj.href;
     }
 
   } catch (e) {
