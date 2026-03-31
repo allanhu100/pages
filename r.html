@@ -3,11 +3,20 @@
 <head>
 <meta charset="UTF-8">
 <title>Redirecting...</title>
+<style>
+  body { font-family: sans-serif; text-align: center; padding: 2rem; }
+  #preview { margin-top: 2rem; font-weight: bold; }
+</style>
 <script>
 (async () => {
   const params = new URLSearchParams(window.location.search);
   const idParam = params.get('id');
-  
+
+  if (!idParam) {
+    document.body.textContent = "No id provided for redirect ❌";
+    return;
+  }
+
   const sheetCSVUrl = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vQqTIz74rTp4UAPrND29ZzRMoDgQS2HLB7FKU5m1IF0AhvvxPgn7ocyUXy9DMiGVb1_DKiePMGIVNTc/pub?gid=463148270&single=true&output=csv';
 
   try {
@@ -16,45 +25,49 @@
     const csvText = await res.text();
 
     const lines = csvText.trim().split('\n');
-
-    // Skip header line
     lines.shift();
 
     const redirects = {};
-
     lines.forEach(line => {
       const row = line.split(',');
       const redirect = {
         id: row[1]?.trim(),
         url: row[2]?.trim(),
-        expiry: row[3]?.trim()
+        expiry: row[3]?.trim(),
+        displayPreview: (row[4]?.trim().toUpperCase() === "TRUE")
       };
-      if (redirect.id && redirect.url) {
-        redirects[redirect.id] = redirect;
-      }
+      if (redirect.id && redirect.url) redirects[redirect.id] = redirect;
     });
 
     const redirectObj = redirects[idParam];
 
-    if (redirectObj) {
-      // Check expiry if provided
-      if (!redirectObj.expiry || new Date() < new Date(redirectObj.expiry)) {
-        window.location.href = redirectObj.url;
+    if (redirectObj && (!redirectObj.expiry || new Date() < new Date(redirectObj.expiry))) {
+      if (redirectObj.displayPreview) {
+        // Show preview
+        const preview = document.createElement('div');
+        preview.id = 'preview';
+        preview.innerHTML = `Redirecting to: <a href="${redirectObj.url}" target="_blank">${redirectObj.url}</a>`;
+        document.body.appendChild(preview);
+
+        setTimeout(() => {
+          window.location.href = redirectObj.url;
+        }, 2500);
       } else {
-        window.location.href = '/404';
+        // Immediate redirect
+        window.location.href = redirectObj.url;
       }
     } else {
-      window.location.href = '/404';
+      document.body.textContent = "Link expired or ID not found ❌";
     }
 
   } catch (e) {
     console.error('Redirect failed:', e);
-    window.location.href = '/404';
+    document.body.textContent = "Redirect failed ❌";
   }
 })();
 </script>
 </head>
 <body>
-Redirecting...
+Redirecting… ✅
 </body>
 </html>
