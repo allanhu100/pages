@@ -113,13 +113,12 @@
     let redirectObj = redirects[idParam];
     let urlObj = null;
 
-    // Determine URL
     if (redirectObj && (!redirectObj.expiry || new Date() < new Date(redirectObj.expiry))) {
       urlObj = normalizeUrl(redirectObj.url);
-      redirectObj.isCSV = true; // mark as CSV
+      redirectObj.isCSV = true;
     } else {
       urlObj = normalizeUrl(idParam);
-      if (urlObj) redirectObj = { displayPreview: true, isCSV: false }; // arbitrary URL
+      if (urlObj) redirectObj = { displayPreview: true, isCSV: false };
     }
 
     if (!urlObj) {
@@ -131,9 +130,10 @@
       const previewBox = document.createElement('div');
       previewBox.id = 'previewBox';
 
+      let bannerText = redirectObj.isCSV ? "You are being redirected to:" : "⚠️ Go at your own risk!";
+
       let metadataHtml = '';
-      // Show metadata only for arbitrary URLs
-      if (redirectObj.isCSV === false) {
+      if (!redirectObj.isCSV) {
         metadataHtml = `
           <br><strong>Protocol:</strong> ${urlObj.protocol}<br>
           <strong>Hostname:</strong> ${urlObj.hostname}<br>
@@ -143,8 +143,8 @@
       }
 
       previewBox.innerHTML = `
-        ⚠️ Go at your own risk!<br><br>
-        <strong>URL:</strong> <a href="${urlObj.href}" target="_blank">${urlObj.href}</a>
+        ${bannerText}<br><br>
+        <a href="${urlObj.href}" target="_blank">${urlObj.href}</a>
         ${metadataHtml}
         <div id="buttons">
           <button id="redirectNow">Redirect Now</button>
