@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Redirecting...</title>
+<script>
+(async () => {
+  const params = new URLSearchParams(window.location.search);
+  const idParam = params.get('id');
+  
+  const sheetCSVUrl = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vQqTIz74rTp4UAPrND29ZzRMoDgQS2HLB7FKU5m1IF0AhvvxPgn7ocyUXy9DMiGVb1_DKiePMGIVNTc/pub?gid=463148270&single=true&output=csv';
+
+  try {
+    const res = await fetch(sheetCSVUrl);
+    if (!res.ok) throw new Error('Could not fetch redirects sheet');
+    const csvText = await res.text();
+
+    const lines = csvText.trim().split('\n');
+
+    // Skip header line
+    lines.shift();
+
+    const redirects = {};
+
+    lines.forEach(line => {
+      const row = line.split(',');
+      const redirect = {
+        id: row[1]?.trim(),
+        url: row[2]?.trim(),
+        expiry: row[3]?.trim()
+      };
+      if (redirect.id && redirect.url) {
+        redirects[redirect.id] = redirect;
+      }
+    });
+
+    const redirectObj = redirects[idParam];
+
+    if (redirectObj) {
+      // Check expiry if provided
+      if (!redirectObj.expiry || new Date() < new Date(redirectObj.expiry)) {
+        window.location.href = redirectObj.url;
+      } else {
+        window.location.href = '/404';
+      }
+    } else {
+      window.location.href = '/404';
+    }
+
+  } catch (e) {
+    console.error('Redirect failed:', e);
+    window.location.href = '/404';
+  }
+})();
+</script>
+</head>
+<body>
+Redirecting...
+</body>
+</html>
