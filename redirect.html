@@ -2,7 +2,6 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Redirecting...</title>
 <script>
 (async () => {
@@ -10,20 +9,30 @@
   const id = params.get('id');
 
   try {
-    // Fetch redirects JSON
-    const response = await fetch('/redirects.json');
-    if (!response.ok) throw new Error('Redirects file not found');
-    const redirects = await response.json();
+    const res = await fetch('https://docs.google.com/spreadsheets/d/e/2PACX-1vQqTIz74rTp4UAPrND29ZzRMoDgQS2HLB7FKU5m1IF0AhvvxPgn7ocyUXy9DMiGVb1_DKiePMGIVNTc/pub?output=csv');
+    const csvText = await res.text();
 
-    // Redirect if ID exists
-    if (id && redirects[id]) {
-      window.location.href = redirects[id];
+    // Convert CSV → JSON
+    const lines = csvText.trim().split('\n');
+    const headers = lines.shift().split(',');
+    const redirects = {};
+    lines.forEach(line => {
+      const row = line.split(',');
+      const obj = {};
+      headers.forEach((h, i) => obj[h.trim()] = row[i]?.trim());
+      redirects[obj.id] = obj;
+    });
+
+    const redirect = redirects[id];
+    if (redirect && (!redirect.expiry || new Date() < new Date(redirect.expiry))) {
+      window.location.href = redirect.url;
     } else {
-      window.location.href = 'https://allanhu100.github.io/404';
+      window.location.href = '/404';
     }
+
   } catch (e) {
     console.error(e);
-    window.location.href = 'https://allanhu100.github.io/404';
+    window.location.href = '/404';
   }
 })();
 </script>
