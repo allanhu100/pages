@@ -1,0 +1,33 @@
+const SECRET = "YOUR_SECRET_KEY"; // keep this long & random
+
+function doPost(e) {
+  try {
+    const params = JSON.parse(e.postData.contents);
+
+    if (params.secret !== SECRET) {
+      return ContentService.createTextOutput("Invalid secret ❌")
+                           .setMimeType(ContentService.MimeType.TEXT);
+    }
+
+    const id = params.id;
+    if (!id) return ContentService.createTextOutput("Missing id ❌");
+
+    const sheet = SpreadsheetApp.getActiveSpreadsheet().getSheetByName("Sheet1"); // change if needed
+    const data = sheet.getDataRange().getValues();
+
+    // Find the row with the matching ID (assumes ID is in column 2)
+    for (let i = 1; i < data.length; i++) { // skip header
+      if (data[i][1] === id) {
+        // Column 5 (index 4) is your hit count
+        const current = data[i][4] || 0;
+        sheet.getRange(i + 1, 5).setValue(current + 1);
+        return ContentService.createTextOutput("Logged ✅");
+      }
+    }
+
+    return ContentService.createTextOutput("ID not found ❌");
+
+  } catch (err) {
+    return ContentService.createTextOutput("Error: " + err.message);
+  }
+}
