@@ -37,7 +37,7 @@
     return;
   }
 
-  const sheetCSVUrl = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vQqTIz74rTp4UAPrND29ZzRMoDgQS2HLB7FKU5m1IF0AhvvxPgn7ocyUXy9DMiGVb1_DKiePMGIVNTc/pub?gid=463148270&single=true&output=csv';
+  const sheetCSVUrl = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vQqTIz74rTp4UAPrND29ZzRMoDgQS2HLB7FKU5m1IF0AhvvxPgn7ocyUXy9DMiGVb1_DKiePMGIVNTc/pub?gid=463148270&single=true&output=csv&t=${Date.now()}';
 
   try {
     const res = await fetch(sheetCSVUrl);
@@ -110,6 +110,6 @@
 </script>
 </head>
 <body>
-Redirecting, please wait....
+Redirecting, please wait...
 </body>
 </html>
