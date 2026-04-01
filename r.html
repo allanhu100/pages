@@ -83,7 +83,9 @@
         ? str 
         : `https://${str}`;
       const urlObj = new URL(urlStr);
-      if (!urlObj.hostname.includes('.')) return null; // reject invalid hostnames
+      if (!/^[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/.test(urlObj.hostname)) {
+        return null;
+      }
       return urlObj;
     } catch {
       return null;
@@ -92,11 +94,11 @@
 
   try {
     const res = await fetch(sheetCSVUrl);
-    if (!res.ok) throw new Error('Could not fetch redirects sheet');
+    if (!res.ok) throw new Error('Could not fetch redirects.csv');
     const csvText = await res.text();
 
     const lines = csvText.trim().split('\n');
-    lines.shift(); // skip header
+    lines.shift();
 
     const redirects = {};
     lines.forEach(line => {
