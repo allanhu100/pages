@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="stylesheet" href="styles/styles.css">
+<link rel="shortcut icon" href="styles/source-favicon.png">
+<title>Contact Info</title>
+<style>
+/* Quick inline styles to mimic your credits page */
+body { font-family: sans-serif; margin:0; padding:0; background:#f9f9f9; color:#333; }
+.site-header { background:#222; color:#fff; padding:1rem; display:flex; justify-content:space-between; align-items:center; }
+.site-header a.logo { color:#fff; text-decoration:none; font-size:1.5rem; }
+.nav-bar a { color:#fff; margin-left:1rem; text-decoration:none; }
+.content { padding:2rem; max-width:600px; margin:0 auto; }
+h1 { margin-bottom:1rem; }
+ul.credits { list-style:none; padding:0; }
+ul.credits li { background:#fff; margin-bottom:0.5rem; padding:0.75rem 1rem; border-radius:5px; box-shadow:0 1px 3px rgba(0,0,0,0.1); }
+.footer { text-align:center; padding:1rem; background:#222; color:#fff; margin-top:2rem; }
+</style>
+</head>
+
+<body>
+
+<header class="site-header">
+    <a href="https://allanhu100.github.io" class="logo">🦖 Rawr</a>
+    <nav class="nav-bar">
+        <a href="https://allanhu100.github.io">Home</a>
+        <a href="https://allanhu100.github.io/games">Games</a>
+        <a href="https://allanhu100.github.io/credits">Credits</a>
+    </nav>
+</header>
+
+<main class="content credits-page">
+    <h1>Contact Info</h1>
+    <ul class="credits" id="output">
+        <li>❌ No valid data found</li>
+    </ul>
+</main>
+
+<footer class="footer">&copy; Allan Hu</footer>
+
+<script>
+// Utility to SHA-256 a string
+async function sha256(str) {
+    const buf = await crypto.subtle.digest("SHA-256", new TextEncoder().encode(str));
+    return [...new Uint8Array(buf)].map(b=>b.toString(16).padStart(2,"0")).join("");
+}
+
+(async function() {
+    const params = new URLSearchParams(window.location.search);
+    const allData = params.getAll("data");
+    const output = document.getElementById("output");
+    output.innerHTML = ""; // Clear default
+
+    const allowed = {
+        "9b0f0c6e6df0d0a0c1c8a0c497bb7d5005c45e26dfec353f5346df75f1a4bb7c": true,
+        "4a7c1b3c9a5cb2e2db0cf0fbb1a92d0b4fd78490c71f6b16e37241e80be4a094": true
+    };
+
+    let found = false;
+
+    for (const encoded of allData) {
+        let decoded;
+        try { decoded = atob(encoded); } 
+        catch { continue; }
+
+        const hash = await sha256(encoded);
+        if (allowed[hash]) {
+            const li = document.createElement("li");
+            li.textContent = allowed[hash];
+            output.appendChild(li);
+            found = true;
+        }
+    }
+
+    if (!found) {
+        const li = document.createElement("li");
+        li.textContent = "❌ No valid data found";
+        output.appendChild(li);
+    }
+})();
+</script>
+
+</body>
+</html>
