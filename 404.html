@@ -2,77 +2,72 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="stylesheet" href="styles/styles.css">
 <link rel="shortcut icon" href="styles/404-favicon.png">
 <title>404 Not Found</title>
+
 <style>
-  html, body {
-    height: 100%;
+.error-page {
+    text-align: center;
+    padding-top: 40px;
+}
+
+.error-code {
+    font-size: 8rem;
+    font-weight: 800;
     margin: 0;
-    font-family: sans-serif;
-    background: #ffffff;
-    color: #1e1e1e;
+    background: linear-gradient(135deg, #ff7b00, #ffb347);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
+
+.error-message {
+    font-size: 1.8rem;
+    margin: 10px 0;
+}
+
+.error-description {
+    color: #777;
+    margin-bottom: 30px;
+}
+
+.error-actions {
     display: flex;
     justify-content: center;
-    align-items: center;
-    text-align: center;
-  }
-
-  .container {
-    max-width: 600px;
-  }
-
-  .error__title {
-    font-size: 15em;
-    margin: 0;
-    color: #e67e22;
-  }
-
-  .error__subtitle {
-    font-size: 2em;
-    margin: 0.5em 0;
-  }
-
-  .error__description {
-    opacity: 0.7;
-    margin-bottom: 2em;
-  }
-
-  .error__button {
-    min-width: 7em;
-    margin: 0.5em;
-    padding: 0.5em 2em;
-    border: 2px solid #e67e22;
-    border-radius: 8em;
-    background: transparent;
-    color: #e67e22;
-    cursor: pointer;
-    font-size: 1em;
-    display: inline-flex;
-    align-items: center;
-    gap: 0.5em;
-  }
-
-  .error__button--active {
-    background-color: #e67e22;
-    color: white;
-  }
+    gap: 20px;
+    flex-wrap: wrap;
+}
 </style>
 </head>
+
 <body>
 
-<div class="container">
-  <div class="error__title">404</div>
-  <div class="error__subtitle">Whoops!</div>
-  <div class="error__description">That page doesn't exist...</div>
+<header class="site-header">
+    <a href="https://allanhu100.github.io/" class="logo">🦖 Rawr</a>
+    <nav class="nav-bar">
+        <a href="https://allanhu100.github.io/">Home</a>
+        <a href="https://allanhu100.github.io/games" class="nav-button">Games</a>
+        <a href="https://allanhu100.github.io/credits" class="nav-button">Credits</a>
+    </nav>
+</header>
 
-  <button class="error__button error__button--active" onclick="window.location.href='https://allanhu100.github.io'">
-    Go To Home 
-  </button>
+<main class="content error-page">
+    <h1 class="error-code">404</h1>
+    <h2 class="error-message">Page not found</h2>
+    <p class="error-description">
+        This page either moved, never existed, or you mistyped the URL.
+    </p>
 
-  <button class="error__button" onclick="window.location.href='https://allanhu100.github.io/games'">
-    Play A Game
-  </button>
-</div>
+    <div class="error-actions">
+        <a href="https://allanhu100.github.io/" class="button">Go Home</a>
+        <a href="https://allanhu100.github.io/games" class="button">Play Games</a>
+    </div>
+</main>
+
+<footer class="footer">
+    &copy; Allan Hu
+</footer>
 
 </body>
 </html>
